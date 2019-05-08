@@ -213,13 +213,24 @@ k8s-install-nginx-ingress: install-tiller
 	helm install stable/nginx-ingress --name nginx
 
 k8s-install-prometheus: install-tiller
+	@echo ">> Deploying Prometheus ..."
 	cd kubernetes/Charts/prometheus && helm upgrade prom . -f custom_values.yml --install
 
 k8s-install-prometheus-operator: install-tiller
+	@echo ">> Deploying Prometheus Operator..."
 	cd kubernetes/Charts/prometheus-operator && helm upgrade prom-operator . --install
 
 k8s-install-grafana: install-tiller
-	helm upgrade --install grafana stable/grafana --set "adminPassword=admin" --set "service.type=NodePort" --set "ingress.enabled=true"  --set "ingress.hosts={reddit-grafana}"
+	@echo ">> Deploying Grafana..."
+	helm upgrade grafana stable/grafana --install --set "adminPassword=admin" --set "service.type=NodePort" --set "ingress.enabled=true"  --set "ingress.hosts={reddit-grafana}"
 
 k8s-install-monitoring: k8s-install-prometheus k8s-install-grafana
+
+k8s-install-efk:
+	@echo ">> Deploying Elasticsearch and Fluentd ..."
+	cd kubernetes && kubectl apply -f ./efk
+
+k8s-install-kibana:
+	@echo ">> Deploying Kibana ..."
+	helm upgrade kibana stable/kibana --install --set "ingress.enabled=true" --set "ingress.hosts={reddit-kibana}" --set "env.ELASTICSEARCH_HOSTS=http://elasticsearch-logging:9200" --version 2.3.0
 

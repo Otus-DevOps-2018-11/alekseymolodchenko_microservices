@@ -13,18 +13,18 @@ spec:
   selector:
     matchLabels:
       k8s-app: elasticsearch-logging
-      version: v5.6.4
+      version: v6.7.2
   template:
     metadata:
       labels:
         k8s-app: elasticsearch-logging
-        version: v5.6.4
+        version: v6.7.2
         kubernetes.io/cluster-service: "true"
     spec:
       nodeSelector:
         elastichost: "true"
       containers:
-      - image: k8s.gcr.io/elasticsearch:v5.6.4
+      - image: elasticsearch:6.7.2
         name: elasticsearch-logging
         resources:
           # need more cpu upon initialization, therefore burstable class
