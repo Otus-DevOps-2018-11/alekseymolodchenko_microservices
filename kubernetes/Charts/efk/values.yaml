@@ -1,0 +1,9 @@
+---
+kibana:
+  ingress:
+    enabled: true
+    hosts:
+     - reddit-kibana
+    annotations: nginx
+  env:
+    ELASTICSEARCH_HOSTS: http://elasticsearch-logging:9200
