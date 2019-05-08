@@ -226,11 +226,12 @@ k8s-install-grafana: install-tiller
 
 k8s-install-monitoring: k8s-install-prometheus k8s-install-grafana
 
-k8s-install-efk:
+k8s-install-efk: install-tiller
 	@echo ">> Deploying Elasticsearch and Fluentd ..."
 	cd kubernetes && kubectl apply -f ./efk
 
-k8s-install-kibana:
+k8s-install-kibana: install-tiller
 	@echo ">> Deploying Kibana ..."
 	helm upgrade kibana stable/kibana --install --set "ingress.enabled=true" --set "ingress.hosts={reddit-kibana}" --set "env.ELASTICSEARCH_HOSTS=http://elasticsearch-logging:9200" --version 2.3.0
 
+k8s-install-logging: k8s-install-efk k8s-install-kibana
