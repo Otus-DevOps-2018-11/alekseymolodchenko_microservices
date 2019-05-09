@@ -29,7 +29,7 @@ spec:
         name: {{ template "ui.fullname" . }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
-          name: {{ template "ui.fullname" . }}
+          name: ui
           protocol: TCP
         env:
         - name: POST_SERVICE_HOST

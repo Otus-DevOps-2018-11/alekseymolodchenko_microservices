@@ -42,7 +42,7 @@ variable "k8s_initial_node_count" {
 
 variable "k8s_node_pool_cont" {
   description = "Cluster node pool count"
-  default     = 3
+  default     = 2
 }
 
 variable "k8s_node_disk_size" {

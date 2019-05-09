@@ -1839,3 +1839,92 @@ data:
   ```
 
   </p></details>
+
+## HW #24 - Kubernetes. Мониторинг и логирование
+
+### Мониторинг
+
+- Добавлен chart для Prometheus. `helm fetch --untar stable/prometheus`
+- Развернут Prometheus `helm upgrade prom . -f custom_values.yml --install`
+- Включены kube-state-metrics и node-exporter
+- Развернуто приложени в кластер, добавлены reddit-endpoints
+- Реализованы job'ы для компонентов приложения (ui-endpoints, comment-endpoints, post-endpoints)
+
+### Визуализация и Templating
+
+- Установлена Grafana
+
+  ```bash
+
+  helm upgrade --install grafana stable/grafana --set "adminPassword=admin" \
+  --set "service.type=NodePort" \
+  --set "ingress.enabled=true" \
+  --set "ingress.hosts={reddit-grafana}"
+
+  ```
+
+- В Grafana добавлен Datasource `http://prom-prometheus-server`
+- Добавлены дашборды для reddit-приложения. Добалены параметры для namespace's
+
+#### Задание со *
+
+- Запущен и настроен Аlertmanager для контроля за работы api-сервера и нод кластера
+- Установлен Prometheus Operator с использованием [Prometheus Operator Helm Chart](https://github.com/helm/charts/tree/master/stable/prometheus-operator)
+- Настроен мониторинг эндпоинтов приложения
+
+### Логирование
+
+- Добавлены манифесты EFK стека
+- Запущены Elasticsearch / Fluentd / Kibana
+
+  <details><summary>Подробнее</summary><p>
+
+  ```bash
+
+  $ kubectl apply -f efk/
+
+  $ helm upgrade --install kibana stable/kibana \
+  --set "ingress.enabled=true" \
+  --set "ingress.hosts={reddit-kibana}" \
+  --set "env.ELASTICSEARCH_HOSTS=http://elasticsearch-logging:9200" \
+  --version 2.3.0
+
+  $ kubectl get pods --all-namespaces=true
+  NAMESPACE     NAME                                                             READY   STATUS    RESTARTS   AGE
+  default       elasticsearch-logging-0                                          0/1     Pending   0          2m
+  default       fluentd-es-v2.0.2-7fh4w                                          1/1     Running   0          2m
+  default       fluentd-es-v2.0.2-pcwgq                                          1/1     Running   0          2m
+  default       fluentd-es-v2.0.2-tpb4r                                          1/1     Running   0          2m
+  default       grafana-7468dc69c6-xqvsp                                         1/1     Running   0          1m
+  kube-system   event-exporter-v0.2.3-85644fcdf-9gh5f                            2/2     Running   0          17m
+  kube-system   fluentd-gcp-scaler-8b674f786-726jk                               1/1     Running   0          17m
+  kube-system   fluentd-gcp-v3.2.0-bx8cc                                         2/2     Running   0          16m
+  kube-system   fluentd-gcp-v3.2.0-qkbj4                                         2/2     Running   0          16m
+  kube-system   fluentd-gcp-v3.2.0-vrv2x                                         2/2     Running   0          17m
+  kube-system   heapster-v1.6.0-beta.1-7456b6554c-pj4ct                          3/3     Running   0          17m
+  kube-system   kube-dns-76dbb796c5-jggnk                                        4/4     Running   0          17m
+  kube-system   kube-dns-76dbb796c5-pmdcg                                        4/4     Running   0          16m
+  kube-system   kube-dns-autoscaler-67c97c87fb-px5gn                             1/1     Running   0          17m
+  kube-system   kube-proxy-gke-k8s-cluster-prod-k8s-node-pool-pr-852e74a6-kdm8   1/1     Running   0          16m
+  kube-system   kube-proxy-gke-k8s-cluster-prod-k8s-node-pool-pr-852e74a6-m5qm   1/1     Running   0          16m
+  kube-system   kube-proxy-gke-k8s-cluster-producti-default-pool-ea0171d3-jgql   1/1     Running   0          17m
+  kube-system   kubernetes-dashboard-69db8c7745-wtrsg                            1/1     Running   0          17m
+  kube-system   l7-default-backend-7ff48cffd7-blc8z                              1/1     Running   0          17m
+  kube-system   metrics-server-v0.2.1-fd596d746-jcxr5                            2/2     Running   0          17m
+  kube-system   prometheus-to-sd-2cxsm                                           1/1     Running   0          16m
+  kube-system   prometheus-to-sd-l7xcc                                           1/1     Running   0          17m
+  kube-system   prometheus-to-sd-t4hrp                                           1/1     Running   0          16m
+  kube-system   tiller-deploy-54fc6d9ccc-5pdxw                                   1/1     Running   0          22m
+  production    prod-comment-57477b9b67-gw7k9                                    1/1     Running   0          21m
+  production    prod-mongodb-6dffdb444f-wf4vc                                    1/1     Running   0          21m
+  production    prod-post-997c4d644-87fcx                                        1/1     Running   0          21m
+  production    prod-ui-6f5f6fcc7b-6cwwh                                         1/1     Running   0          21m
+  production    prod-ui-6f5f6fcc7b-qrhh5                                         1/1     Running   0          21m
+  production    prod-ui-6f5f6fcc7b-qvv7v                                         1/1     Running   0          21m
+  ```
+
+  </p></details>
+
+#### Задание со *
+
+- В директории `kubernetes/Charts/efk` расположен Helm-чарт для установки EFK стека

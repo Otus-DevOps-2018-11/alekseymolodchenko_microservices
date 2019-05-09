@@ -27,7 +27,7 @@ spec:
         name: {{ template "post.fullname" . }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
-          name: {{ template "post.fullname" . }}
+          name: post
           protocol: TCP
         env:
         - name: POST_DATABASE_HOST

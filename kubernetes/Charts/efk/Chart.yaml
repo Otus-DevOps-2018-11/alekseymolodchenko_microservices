@@ -1,0 +1,8 @@
+---
+name: efk
+version: 1.0.0
+description: EFK Stack Chart
+maintainers:
+  - name: Aleksey Molodchenko
+email: am@sw1tch.pp.ua
+appVersion: 1.0

@@ -1,0 +1,6 @@
+---
+dependencies:
+  - name: kibana
+    version: "2.3.0"
+    repository: https://kubernetes-charts.storage.googleapis.com
+    alias: kibana
